@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Datenbanken – Lernplattform</title>
+<style>
+:root{--bg:#eef1f5;--ink:#14202e;--mut:#5a6878;--card:#fff;--line:#d3dae3;--ac:#1d4f9f;--ok:#17744a;--bad:#b3261e;--okb:#e3f4ea;--badb:#fbe7e5}
+@media(prefers-color-scheme:dark){:root{--bg:#10161e;--ink:#e6ecf3;--mut:#9aa8b8;--card:#19212c;--line:#2c3746;--ac:#6ea0ec;--ok:#58c28b;--bad:#f08a82;--okb:#173326;--badb:#3a1c1a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,"Segoe UI",sans-serif}
+header{padding:20px 16px 8px;max-width:920px;margin:auto}
+h1{margin:0;font:700 26px/1.2 Georgia,"Times New Roman",serif}
+header p{margin:4px 0 0;color:var(--mut);font-size:14px}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:6px;flex-wrap:wrap;max-width:920px;margin:auto;padding:10px 16px;border-bottom:1px solid var(--line)}
+nav button{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 12px;border-radius:8px;font:inherit;font-size:14px;cursor:pointer}
+nav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+main{max-width:920px;margin:auto;padding:16px}
+h2{margin:0 0 6px;font:700 21px Georgia,serif}h3{margin:18px 0 4px;font-size:17px}
+.lead{color:var(--mut);margin:0 0 14px}
+.box,.info{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 12px}
+.box p{margin:0 0 8px}
+button{font:inherit}
+.opt{display:block;width:100%;text-align:left;margin:5px 0;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--ac)}
+.opt.ok{background:var(--okb);border-color:var(--ok)}.opt.bad{background:var(--badb);border-color:var(--bad)}
+.fb{margin-top:8px;font-size:15px}.fb pre{margin:6px 0 0}
+textarea{width:100%;font:14px/1.45 ui-monospace,Consolas,monospace;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);resize:vertical}
+.go,.alt{margin:6px 6px 0 0;padding:7px 14px;border-radius:8px;border:1px solid var(--ac);cursor:pointer}
+.go{background:var(--ac);color:#fff}.alt{background:none;color:var(--ac)}
+pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;overflow-x:auto;font:13px/1.45 ui-monospace,Consolas,monospace;white-space:pre-wrap}
+code{font:13px ui-monospace,Consolas,monospace;background:var(--bg);padding:1px 4px;border-radius:4px}
+#vg{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.card{text-align:left;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer}
+.card span{display:none;margin-top:6px;color:var(--mut);font-size:14px}.card.open span{display:block}.card.open{border-color:var(--ac)}
+#vs{width:100%;max-width:340px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit;margin-right:8px}
+.msg{max-width:88%;padding:9px 13px;margin:8px 0;border-radius:12px}
+.bot{background:var(--card);border:1px solid var(--line)}.me{background:var(--ac);color:#fff;margin-left:auto}
+.stat{font-weight:600;color:var(--ac);margin-bottom:10px}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border:1px solid var(--line);padding:5px 8px;text-align:left}
+footer{max-width:920px;margin:auto;padding:0 16px 30px;color:var(--mut);font-size:13px}
+body.home nav,body.home main{display:none}body:not(.home) #home{display:none}
+#home{max-width:920px;margin:auto;padding:64px 16px 24px}
+#home h1{font-size:42px}#home p{font-size:17px;color:var(--mut);margin:10px 0 0}
+#tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-top:28px}
+.tile{text-align:left;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:16px;cursor:pointer}
+.tile:hover{border-color:var(--ac)}.tile b{display:block;font-size:17px;margin-bottom:2px}.tile span{color:var(--mut);font-size:14px}
+.box,.info{overflow-x:auto}
+.rst{border-color:var(--line);color:var(--mut);margin-bottom:8px}
+.g{width:100%;height:auto;display:block;margin:8px 0;background:var(--card);border:1px solid var(--line);border-radius:10px}
+.g text{fill:var(--ink);font:13px system-ui,sans-serif}.g .th{font-weight:700;fill:var(--ac)}
+.g .bx{fill:var(--card);stroke:var(--ac);stroke-width:1.5}.g .ln{stroke:var(--mut);stroke-width:1.3;fill:none}.g .ar{stroke:var(--ac);stroke-width:1.6;fill:none}
+.g .pk{font-weight:700;text-decoration:underline}.g .fk{fill:var(--ac);font-style:italic}.g .tg{fill:var(--bad);font-size:12px}.g .cd{font-weight:700;fill:var(--ac);font-size:15px}
+.tu h3{margin:0 0 6px}.tu table{margin-top:8px;width:auto}
+</style>
+</head>
+<body>
+<div id="home"><h1>Datenbanken Lernplattform</h1><p>Prüfungsvorbereitung nach Vorlesungsskript (de Vries), Übungsblättern und Klausuren · 63 Aufgaben. Wähle einen Bereich:</p><div id="tiles"></div></div>
+<nav id="nav"></nav>
+<main>
+
+<section id="v"><h2>Wichtige Vokabeln</h2><p class="lead">Karte anklicken, um die Definition aufzudecken.</p>
+<p><input id="vs" placeholder="Begriff suchen …"><button class="alt" id="va">Alle auf-/zudecken</button><button class="alt rst" id="vr">↺ Zurücksetzen</button></p><div id="vg"></div></section>
+
+<section id="q"><h2>Multiple Choice</h2><p class="lead">24 Fragen zu DBMS, SQL, ERM und Normalisierung.</p><div class="stat" id="qs">0 / 0 richtig</div></section>
+
+<section id="s"><h2>SQL-Praxis</h2><p class="lead">Schreibe die Anweisung. Geprüft wird auf die nötigen Schlüsselwörter und Tabellennamen (keine Ausführung) – die Musterlösung zeigt eine mögliche Lösung.<br>Tabellen: <code>Pruefungen(MatrikelNr, Studiengang, Studienfach, Studienort, Zensur, Versuch)</code>, <code>Angestellte(Vorname, Nachname, Geburtsdatum, Fuehrerscheinklasse)</code></p></section>
+
+<section id="n"><h2>NoSQL-Praxis</h2><p class="lead">Antworte in ganzen Sätzen. Geprüft wird auf Stichworte aus Kapitel 14 und 15 des Skripts.</p><div id="capg"></div></section>
+
+<section id="e"><h2>SQL-Einführung für Anfänger</h2><p class="lead">Du brauchst keine Vorkenntnisse. Lies jeden Schritt, überlege dir das Ergebnis selbst und klicke dann auf „Ergebnis anzeigen“.</p><div class="tu"></div></section>
+
+<section id="t"><h2>Datenmodellierung – Theorie</h2><p class="lead">Von der Idee zur fertigen Tabelle in 5 Schritten, nach dem Skript (Kap. 8–10).</p>
+<div class="info"><h3>Schritt 1: Das ER-Modell ist der Bauplan</h3>
+<p>Bevor man Tabellen anlegt, zeichnet man einen Plan der Daten. Ein <b>Entitätstyp</b> (Rechteck) ist eine Sorte von „Dingen“, z. B. Angestellter oder Projekt. Eine <b>Beziehung</b> (Raute) sagt, wie zwei Sorten zusammenhängen: Angestellter <i>leitet</i> Projekt. Das ist die <b>Chen-Notation</b>. Jeder Entitätstyp wird später zu einer Tabelle, jede Entität zu einer Zeile.</p>
+<div id="g1"></div>
+<p><b>So liest du die Zahlen (Kardinalitäten):</b> Sie stehen am jeweils gegenüberliegenden Entitätstyp. Das <b>N</b> neben „Projekt“ heißt: Ein Angestellter kann mehrere Projekte leiten. Die <b>1</b> neben „Angestellter“ heißt: Ein Projekt wird von genau einem Angestellten geleitet.</p>
+<table><tr><th>Symbol</th><th>Bedeutung</th><th>Merkhilfe</th></tr><tr><td>1</td><td>genau einer</td><td>„muss“</td></tr><tr><td>C</td><td>höchstens einer</td><td>„kann“ (choice)</td></tr><tr><td>M / N</td><td>mehrere, mindestens einer</td><td>„muss“</td></tr><tr><td>CM</td><td>mehrere oder keiner</td><td>„kann“</td></tr></table>
+<h3>Schritt 2: 1:N wird zu zwei Tabellen mit einem Fremdschlüssel</h3>
+<p>Ein <b>Fremdschlüssel</b> ist eine Spalte, die nur Werte enthält, die in einer anderen Tabelle als Primärschlüssel vorkommen. Er ist wie ein Verweis. <b>Merksatz: Der Fremdschlüssel kommt auf die N-Seite.</b> Ein Angestellter hat nur eine Abteilung, dafür reicht eine Spalte. Umgekehrt bräuchte eine Abteilung beliebig viele Spalten für ihre Angestellten.</p>
+<div id="g2"></div>
+<p>Die Pfeile zeigen, wer auf wen verweist. Bei „muss“ (1) schreibt man <code>NOT NULL</code> an den Fremdschlüssel, bei „kann“ (C) darf er leer (NULL) sein.</p>
+<h3>Schritt 3: M:N braucht eine dritte Tabelle</h3>
+<p>Eine Spalte kann keine Liste speichern. Deshalb löst man M:N mit einer <b>Beziehungstabelle</b> auf. Jede Zeile dort ist ein Paar, das zusammengehört. Hier arbeitet Anna an „Web“ und „App“, Bert an „Web“. Beide Fremdschlüssel zusammen bilden den Primärschlüssel (unterstrichen). Die Tabelle darf weitere Spalten haben, z. B. <code>stunden</code>.</p>
+<div id="g3"></div>
+<h3>Schritt 4: Übersicht aller Ableitungsregeln</h3>
+<table><tr><th>Beziehung</th><th>Umsetzung</th></tr>
+<tr><td>1:N</td><td>Fremdschlüssel nur auf die <b>N-Seite</b> (Regel 5). C-CM: darf NULL sein (Regel 6). 1-CM: <code>NOT NULL</code> (Regel 7).</td></tr>
+<tr><td>M:N (CM-CM)</td><td>Beziehungstabelle mit zwei Fremdschlüsseln (Regel 8).</td></tr>
+<tr><td>1-C</td><td>Primärschlüssel der 1-Seite wird Fremdschlüssel der anderen Seite, <code>NOT NULL UNIQUE</code> (Regel 10). UNIQUE verhindert Dubletten.</td></tr>
+<tr><td>C-C</td><td>Beziehungstabelle, beide Fremdschlüssel <code>NOT NULL UNIQUE</code> und zusammen Primärschlüssel (Regel 11).</td></tr>
+<tr><td>1-1</td><td>Nicht in getrennten Tabellen umsetzbar, die Typen werden in <b>einer</b> Tabelle zusammengefasst.</td></tr></table>
+<p>Namenskonvention: Entitätstypen im Singular, Tabellen im Plural. Eine Tabelle mit Fremdschlüssel kann erst angelegt werden, wenn die referenzierte Tabelle existiert.</p>
+<h3>Schritt 5: Normalisierung räumt die Tabellen auf</h3>
+<p>Warum? Steht zu viel Information in einem Datensatz, drohen <b>Anomalien</b>. Beispiel aus dem Skript: Die Tabelle <code>alben(reihe, band, titel, verlag, jahr)</code> speichert den Verlag bei jedem Album. <b>Einfügeanomalie:</b> Ein Tippfehler legt „Asterix“ plötzlich bei einem zweiten Verlag an. <b>Änderungsanomalie:</b> Ein Update ändert nur ein Album, die anderen behalten den alten Verlag. <b>Löschanomalie:</b> Wird das einzige Album von „Tim und Struppi“ gelöscht, ist auch der Verlag der Reihe weg. Lösung: eine eigene Tabelle <code>reihen</code> mit dem Verlag.</p>
+<div id="g4"></div>
+<table><tr><th>NF</th><th>Bedingung</th><th>Beispiel und Lösung</th></tr>
+<tr><td>1NF</td><td>Nur einfache Werte, keine Tabelle in einer Spalte</td><td><code>kunden(…, AuftragsNr)</code> mit mehreren Aufträgen → Fremdschlüssel in <code>auftraege</code></td></tr>
+<tr><td>2NF</td><td>Jedes Nichtschlüsselattribut hängt vom ganzen Primärschlüssel ab</td><td><code>Positionen(ArtikelNr, AuftragsNr, Menge, Preis)</code>: Der Preis hängt nur von ArtikelNr → Preis nach <code>Artikel</code></td></tr>
+<tr><td>3NF</td><td>Keine transitiven Abhängigkeiten</td><td><code>Artikel(…, LagerNr, Lagerort)</code>: Lagerort hängt über LagerNr am Artikel → Tabelle <code>Lager</code></td></tr>
+<tr><td>4NF</td><td>Nichts Berechenbares speichern</td><td>Bruttopreis = Netto + Steuer → Spalte streichen</td></tr></table>
+<p><b>Daumenregeln:</b> 1NF nur verletzt, wenn bei 1:N der Fremdschlüssel auf der 1-Seite steht. 2NF nur bei einem Primärschlüssel aus mehreren Spalten. 3NF nur, wenn ein Fremdschlüssel fehlt, der da sein sollte. 4NF nur bei berechenbaren Attributen.</p>
+</div></section>
+
+<section id="w"><h2>Datenmodellierung – Moderiertes Üben</h2><p class="lead">Ein Tutor führt dich Schritt für Schritt durch die Ableitung. Die Grafik wächst mit jeder richtigen Antwort. Wähle ein Szenario:</p><div id="ws"></div><div id="wg"></div><div id="wc"></div></section>
+
+</main>
+<footer>Inhalte ausschließlich aus: Datenbanken-Vorlesungsskript (A. de Vries), Übungsblätter 1–5, Modulhandbuch, Klausuren.</footer>
+
+<script>
+const $=s=>document.querySelector(s),E=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+function el(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.innerHTML=x;return e}
+
+/* ---------- Navigation ---------- */
+const tabs=[["Vokabeln","v","Begriffe als Karteikarten lernen"],["SQL-Einführung","e","Schritt für Schritt, auch ohne Vorwissen"],["Multiple Choice","q","24 Fragen mit Auswertung"],["SQL-Praxis","s","27 Schreibaufgaben"],["NoSQL-Praxis","n","12 Textaufgaben mit CAP-Grafik"],["Modellierung: Theorie","t","Erklärt mit Grafiken"],["Modellierung: Üben","w","Geführt, mit Live-Grafik"]];
+const hb=el("button","","⌂ Start");hb.dataset.id="home";hb.onclick=()=>show("home");$("#nav").append(hb);
+tabs.forEach(([n,id,d])=>{const b=el("button","",n);b.dataset.id=id;b.onclick=()=>show(id);$("#nav").append(b);const t=el("button","tile","<b>"+n+"</b><span>"+d+"</span>");t.onclick=()=>show(id);$("#tiles").append(t)});
+function show(id){document.body.classList.toggle("home",id=="home");document.querySelectorAll("main section").forEach(s=>s.hidden=s.id!=id);document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.id==id));scrollTo(0,0)}
+function rb(id,fn,txt){const b=el("button","alt rst","↺ "+(txt||"Alles zurücksetzen"));b.onclick=fn;$("#"+id+" .lead").after(b)}
+
+/* ---------- 1 Vokabeln ---------- */
+const V=[
+["Datenbank / DBMS","Datenbank (Datenbasis) = Menge der gespeicherten Daten. DBMS = Programme zum Zugriff. Zusammen: Datenbanksystem nach ANSI-SPARC."],
+["ANSI-SPARC-Architektur","Dreischichtige Referenzarchitektur (1975): externe Ebene (Benutzersichten, Views), logische Ebene (ER-Diagramme, Normalisierung), interne Ebene (Speicherformate)."],
+["Relationales DBMS","Speichert Daten in Tabellen nach dem Modell von E. F. Codd (Ende der 1960er Jahre), dem wichtigsten Datenbanktyp für betriebliche Anwendungen."],
+["Relation","Mathematisch eine Teilmenge des kartesischen Produkts von Mengen. Als Tabelle: Zeilen ohne Duplikate, Reihenfolge egal."],
+["Relationentyp","Schema einer Tabelle: Tabellenname mit Attributen, z. B. tabelle(spalte_x, spalte_y, …), Primärschlüssel unterstrichen."],
+["Attribut, Tupel","Attribut = Spalte/Feld; Tupel = Zeile/Datensatz (Objektmodell: Attribut bzw. Objekt)."],
+["Schlüssel","Attributkombination, die für jeden Datensatz eine andere Wertekombination hat. Reduzierbar, wenn er auch ohne ein Feld eindeutig bleibt."],
+["Primärschlüssel","Nicht reduzierbarer Schlüssel zur Identifikation der Datensätze. Zusammengesetzt, wenn er aus mehreren Attributen besteht. Nachträglich schwer änderbar."],
+["Natürlicher / künstlicher Primärschlüssel","Natürlich: aus vorhandenen Attributen gebildet. Künstlich: zusätzlich eingeführtes Attribut, z. B. eine ID."],
+["Fremdschlüssel","Schlüssel, der nur Werte enthält, die in mindestens einer anderen Tabelle als Primärschlüssel vorkommen. SQL: FOREIGN KEY(…) REFERENCES …"],
+["Referenzielle Integrität","Alle Fremdschlüsselwerte verweisen auf einen existierenden Datensatz der referenzierten Tabelle (NULL nur, wenn zulässig)."],
+["NULL","Unbekannte Information. Dreiwertige Logik: TRUE, FALSE, NULL. Abfrage mit IS NULL / IS NOT NULL, nicht mit =."],
+["Aggregatfunktion","Fasst Werte mehrerer Datensätze zu einem Wert zusammen: COUNT, SUM, AVG, MIN, MAX."],
+["GROUP BY / HAVING","GROUP BY gruppiert nach Spalten. HAVING filtert Gruppen (auch mit Aggregatfunktionen), WHERE filtert einzelne Datensätze vorher."],
+["Inner / Left / Right Join","Inner: nur verknüpfte Datensätze. Left/Right (Outer): zusätzlich nichtverknüpfte Datensätze der führenden linken/rechten Tabelle."],
+["Entität, Entitätstyp","Entität = individuelles Objekt der modellierten Welt. Entitätstyp = Kategorie gleichartiger Entitäten (Rechteck im ERM), wird zur Tabelle."],
+["Beziehung (ERM)","Verbindung zwischen Entitätstypen, z. B. Angestellter leitet Projekt. Wird über Fremdschlüssel oder Beziehungstabelle implementiert."],
+["Kardinalität","Maximal- und Mindestanzahl der Beziehungen: 1 (muss), C (kann), M/N (mehrere, muss), CM (mehrere, kann)."],
+["Chen-Notation","Älteste und verbreitetste ER-Notation mit Entitätstyp, Beziehung und Kardinalitäten. Für Tabellendiagramme: Krähenfußnotation."],
+["Beziehungstabelle","Technische Tabelle zur Auflösung einer M:N-Beziehung, enthält die Fremdschlüssel beider Seiten (und ggf. weitere Attribute)."],
+["Einfügeanomalie","Datensatz kann nicht bzw. nur inkonsistent eingefügt werden, weil Regeln nicht per Integritätsregel erzwingbar sind."],
+["Änderungsanomalie","Bei der Änderung eines Wertes werden nicht alle betroffenen Datensätze geändert, Dateninkonsistenz."],
+["Löschanomalie","Durch das Löschen eines Datensatzes geht mehr Information verloren als gewollt."],
+["Normalisierung (1NF–4NF)","Schrittweises Verfahren gegen Redundanz und Anomalien: 1NF einfache Werte, 2NF volle Abhängigkeit vom Schlüssel, 3NF keine transitiven Abhängigkeiten, 4NF keine berechenbaren Attribute."],
+["Vertikale / horizontale Skalierung","Vertikal (scale-up): stärkerer Rechner. Horizontal (scale-out): zusätzliche Rechner, verteilte Datenbank."],
+["CAP-Theorem","In einem verteilten System sind nur zwei der drei Eigenschaften Consistency, Availability, Partition tolerance gleichzeitig erfüllbar (C–A, C–P oder A–P)."],
+["Consistency / Availability / Partition tolerance","Konsistenz: immer konsistenter Zustand. Verfügbarkeit: schnelle Antwort. Partitionstoleranz: Ausfall von Knoten oder Verbindung legt nicht das System lahm."],
+["ACID vs. BASE","ACID: atomicity, consistency, integrity, durability (relational). BASE: basically available, soft state, eventually consistent (verteilt)."],
+["NoSQL-Datenbank","Schemafrei oder mit schwachen Schemarestriktionen, nicht relational; oft horizontal skalierbar, BASE, quelloffen."],
+["Spaltenorientierte Datenbank","Daten spaltenweise gespeichert (Wide Column Store): gut für Analyse und Aggregation. Beispiele: BigTable, HBase, Cassandra."],
+["Dokumentbasierte Datenbank","Speichert Dokumente aus dynamisch strukturierten Werten, meist JSON/BSON oder XML. Beispiele: MongoDB, CouchDB."],
+["Key-Value Store","Assoziatives Array; Suche nur über den Schlüssel, nicht über Werte. Beispiele: Riak, Redis."],
+["Graphdatenbank","Speichert Knoten und Beziehungen effizient, z. B. soziale Netzwerke, Straßennetze. Beispiele: Neo4j, FlockDB."],
+["Sharding","Horizontale Partitionierung: Die Datenbank wird auf Serverknoten (Shards) verteilt."],
+["MapReduce","Von Google (2004) entwickeltes Verfahren für verteilte Daten: Map-Phase erzeugt Schlüssel-Wert-Paare, Reduce-Phase aggregiert sie je Schlüssel."],
+["Konsistentes Hashing","Verteilt Daten über Hashwerte auf Server, ohne dass sich bei wechselnder Serveranzahl die gesamte Zuordnung ändert (Dynamo-Modell)."]];
+function rv(){const g=$("#vg");g.innerHTML="";V.filter(([t,d])=>(t+d).toLowerCase().includes($("#vs").value.toLowerCase())).forEach(([t,d])=>{const c=el("button","card","<b>"+t+"</b><span>"+d+"</span>");c.onclick=()=>c.classList.toggle("open");g.append(c)})}
+$("#vs").oninput=rv;$("#va").onclick=()=>{const c=[...document.querySelectorAll(".card")],o=c.some(x=>!x.classList.contains("open"));c.forEach(x=>x.classList.toggle("open",o))};rv();
+
+/* ---------- 2 Multiple Choice ---------- */
+const Q=[
+["Aus welchen drei Ebenen besteht die ANSI-SPARC-Architektur?",["Extern, logisch (konzeptionell), intern","Client, Server, Datenbank","Entität, Beziehung, Attribut","Relation, Tupel, Attribut"],0,"Extern: Benutzersichten/Views. Logisch: ER-Diagramme, Normalisierung. Intern: Speicherformate und Zugriffssteuerung."],
+["Wie fragt man in SQL korrekt auf einen unbekannten Wert ab?",["WHERE spalte = NULL","WHERE spalte IS NULL","WHERE spalte = 0","WHERE spalte LIKE NULL"],1,"NULL ist unbekannte Information (dreiwertige Logik). Mit = geht es nicht, man nutzt IS NULL bzw. IS NOT NULL."],
+["Bei einer 1:N-Beziehung (Abteilung 1 – N Angestellter) kommt der Fremdschlüssel …",["in die 1-Seite","in die N-Seite","in beide Tabellen","in eine neue Tabelle"],1,"Regel 5: Bei 1:N wird nur ein Fremdschlüssel benötigt, er steht auf der N-Seite."],
+["Wie wird eine M:N-Beziehung (CM-CM) umgesetzt?",["Fremdschlüssel in einer der Tabellen","Mehrere Fremdschlüsselspalten pro Datensatz","Beziehungstabelle mit zwei Fremdschlüsseln","Beide Entitäten in eine Tabelle"],2,"Regel 8: Auflösung in zwei 1-CM-Beziehungen mit einer Beziehungstabelle, deren Fremdschlüssel auf beide Primärschlüssel verweisen."],
+["„Mitarbeiter leitet Projekt“ ist eine 1-C-Beziehung. Welche Eigenschaften braucht der Fremdschlüssel?",["NULL erlaubt","NOT NULL und UNIQUE","nur UNIQUE","nur NOT NULL"],1,"Regel 10: NOT NULL (Muss-Seite) und UNIQUE (höchstens ein Datensatz je Gegenseite)."],
+["Was unterscheidet HAVING von WHERE?",["HAVING wirkt auf Gruppen und kann Aggregatfunktionen auswerten, WHERE auf einzelne Datensätze","Beide sind identisch","WHERE kann Aggregatfunktionen auswerten","HAVING wird vor GROUP BY ausgeführt"],0,"WHERE prüft jeden Datensatz vor der Gruppierung; HAVING wird nach dem Gruppieren auf die Gruppen angewendet."],
+["Relationale Datenbanken sind nach dem CAP-Theorem typischerweise vom Typ …",["C–P","C–A","A–P","C–A–P"],1,"Laut Skript (Abb. 14.6) sind relationale Datenbanken C–A-Systeme; Online-Banking C–P; DNS/Cassandra A–P."],
+["Positionen(ArtikelNr, AuftragsNr, Menge, Preis): Welche Normalform ist verletzt?",["1NF","2NF","3NF","4NF"],1,"Der Preis hängt nur von ArtikelNr ab, nicht vom ganzen Schlüssel → 2NF. Preis in die Tabelle Artikel auslagern."],
+["Artikel(ArtikelNr, Bezeichnung, Preis, LagerNr, Lagerort): Welche Normalform ist verletzt?",["1NF","2NF","3NF","4NF"],2,"Lagerort hängt über LagerNr transitiv von ArtikelNr ab → 3NF. Tabelle Lager auslagern."],
+["Rechnung(RechnungsNr, Datum, AuftragsNr, Nettopreis, Umsatzsteuersatz, Bruttopreis): Was ist das Problem?",["Teilabhängigkeit (2NF)","Bruttopreis ist berechenbar (4NF)","Mehrere Werte je Spalte (1NF)","Es fehlt ein Fremdschlüssel"],1,"Der Bruttopreis ergibt sich aus Netto und Steuersatz → 4NF, Attribut streichen."],
+["Beim Löschen des einzigen Albums einer Reihe geht auch die Information über den Verlag der Reihe verloren. Welche Anomalie?",["Einfügeanomalie","Änderungsanomalie","Löschanomalie","Keine"],2,"Löschanomalie: Es geht mehr Information verloren als gewollt. Lösung: Tabelle reihen mit Verlag."],
+["Alben(titel, reihe): Asterix; Lucky Luke; Gregs Tagebuch; Hägar → null. Reihen(name): Asterix, Gregs Tagebuch, Franka. reihe ist Fremdschlüssel. Was gilt?",["Referenzielle Integrität gilt","Es fehlt die Reihe „Lucky Luke“","Es fehlt ein Album","Nicht herstellbar"],1,"„Lucky Luke“ verweist auf eine nicht vorhandene Reihe. NULL (Hägar) ist bei einer Kann-Beziehung erlaubt; eine Reihe ohne Album (Franka) ist unproblematisch."]];
+Q.push(
+["Was ist eine Relation mathematisch?",["Eine Teilmenge des kartesischen Produkts gegebener Mengen","Eine Verbindung zweier Datenbanken","Ein Primärschlüssel mit Fremdschlüssel","Ein Diagramm mit Rechtecken und Rauten"],0,"Jede endliche Relation lässt sich als Tabelle ohne doppelte Zeilen darstellen: Spalten = Mengen, Zeilen = Tupel."],
+["Was ist ein Primärschlüssel?",["Ein beliebiges Attribut","Ein nicht reduzierbarer Schlüssel zur Identifikation der Datensätze","Ein Verweis auf eine andere Tabelle","Eine berechnete Spalte"],1,"Definition 5.1: nicht reduzierbarer Schlüssel; er kann aus mehreren Attributen bestehen (zusammengesetzt)."],
+["Was ist ein Fremdschlüssel?",["Ein Schlüssel, dessen Werte als Primärschlüssel einer anderen Tabelle vorkommen","Ein Schlüssel ohne Primärschlüssel","Ein Passwort für die Datenbank","Ein doppelter Primärschlüssel"],0,"Definition 9.1. In SQL: FOREIGN KEY(…) REFERENCES …"],
+["Welche Anweisung sortiert die Zensuren absteigend?",["ORDER BY Zensur","ORDER BY Zensur DESC","SORT Zensur DOWN","GROUP BY Zensur DESC"],1,"ORDER BY sortiert standardmäßig aufsteigend, DESC kehrt die Reihenfolge um."],
+["Welche der folgenden ist keine Aggregatfunktion?",["COUNT","SUM","DISTINCT","MAX"],2,"Aggregatfunktionen sind COUNT, SUM, AVG, MIN, MAX. DISTINCT entfernt doppelte Datensätze."],
+["Was liefert ein LEFT JOIN?",["Nur Datensätze mit Verknüpfung in beiden Tabellen","Alle Datensätze der linken Tabelle, auch ohne Verknüpfung","Alle Datensätze der rechten Tabelle","Das kartesische Produkt"],1,"Der Inner Join zeigt nur verknüpfte Datensätze. Beim Outer Join ist eine Tabelle führend; fehlende Partner erscheinen als NULL."],
+["Was bewirkt UNIQUE bei einem Attribut?",["Es darf nie NULL sein","Es verhindert Dubletten","Es macht das Attribut zum Fremdschlüssel","Es sortiert die Spalte"],1,"UNIQUE lässt keine zwei Datensätze mit gleichem Wert zu. Zusammen mit NOT NULL setzt man so die 1 bei 1-C um."],
+["Welches Symbol steht für „höchstens eins“ (Kann-Beziehung)?",["1","C","M","N"],1,"Modifizierte Chen-Notation: 1 (muss), C (kann), M/N (mehrere, muss), CM (mehrere, kann)."],
+["Wann kann die 1NF verletzt sein?",["Wenn bei 1:N der Fremdschlüssel auf der 1-Seite steht","Wenn ein Attribut berechenbar ist","Wenn ein Nichtschlüsselattribut nur vom halben Schlüssel abhängt","Wenn eine Tabelle zwei Fremdschlüssel hat"],0,"Beispiel: kunden(…, AuftragsNr) mit mehreren Aufträgen. Halten wir Regel 6 und 7 ein, ist die 1NF automatisch erfüllt."],
+["Was bedeutet horizontale Skalierung (scale-out)?",["Mehr Speicher im selben Rechner","Zusätzliche Rechner, die Daten verteilt speichern","Eine zusätzliche Tabelle","Ein schnellerer Index"],1,"Vertikal = Rechner aufrüsten (scale-up). Horizontal = Rechnerverbund; relationale Datenbanken eignen sich dafür schlecht."],
+["Wofür steht BASE?",["Basically available, soft state, eventually consistent","Backup, availability, security, encryption","Binary, atomic, safe, exact","Basic access to stored entities"],0,"BASE ist das schwächere Konsistenzmodell verteilter Datenbanken, im Gegensatz zu ACID."],
+["Redis und Riak gehören zu welchem NoSQL-Typ?",["Dokumentbasiert","Spaltenorientiert","Key-Value Store","Graphdatenbank"],2,"Key-Value Stores sind assoziative Arrays; gesucht wird nur über den Schlüssel."]);
+let st=[];
+function qst(){const a=st.filter(x=>x!=null);$("#qs").textContent=a.filter(x=>x).length+" / "+a.length+" richtig (von "+Q.length+" Fragen)"}
+function qb(i){const [q,o,a,e]=Q[i],d=el("div","box","<p><b>"+(i+1)+".</b> "+q+"</p>");o.forEach((t,j)=>{const b=el("button","opt",E(t));b.onclick=()=>{if(st[i]!=null)return;const ok=j==a;st[i]=ok;b.classList.add(ok?"ok":"bad");d.children[a+1].classList.add("ok");const f=el("p","fb",(ok?"✔ Richtig. ":"✘ Leider falsch. ")+e+" "),r=el("button","alt rst","↺ Frage zurücksetzen");r.onclick=()=>{st[i]=null;d.replaceWith(qb(i));qst()};f.append(r);d.append(f);qst()};d.append(b)});return d}
+function rq(){document.querySelectorAll("#q .box").forEach(x=>x.remove());st=[];Q.forEach((_,i)=>$("#q").append(qb(i)));qst()}
+rb("q",rq);rq();
+
+/* ---------- 3 SQL & 4 NoSQL: Textaufgaben ---------- */
+function mk(id,data,start){const rs=[];data.forEach(([q,c,s],i)=>{const d=el("div","box","<p><b>"+(start+i)+".</b> "+q+"</p>"),ta=el("textarea"),r=el("div","fb");ta.rows=id=="s"?3:4;ta.spellcheck=false;ta.placeholder=id=="s"?"SQL eingeben …":"Antwort eingeben …";
+const b=el("button","go","Prüfen"),m=el("button","alt","Musterlösung"),x=el("button","alt rst","↺ Zurücksetzen");
+b.onclick=()=>{const v=ta.value.toLowerCase().replace(/\s+/g," ").replace(/;\s*$/,"");if(!v.trim()){r.textContent="Bitte zuerst etwas eingeben.";return}const res=c.map(([re,h])=>re.test(v)?"✔ "+E(h):"✘ Es fehlt: <code>"+E(h)+"</code>"),n=res.filter(x=>x[0]=="✔").length;r.innerHTML="<b>"+(n==c.length?"Alle Bestandteile gefunden – sieht richtig aus.":n+" von "+c.length+" Bestandteilen gefunden.")+"</b><br>"+res.join("<br>")};
+m.onclick=()=>{r.innerHTML="";const p=el("pre");p.textContent=s;r.append(p)};x.onclick=()=>{ta.value="";r.innerHTML=""};rs.push(x.onclick);d.append(ta,b,m,x,r);$("#"+id).append(d)});rb(id,()=>rs.forEach(f=>f()))}
+let mid=0;
+const tx=(x,y,s,c)=>`<text ${c?`class="${c}" `:""}x="${x}" y="${y}" text-anchor="middle">${s}</text>`;
+function ER(a,ca,r,cb,b){return `<svg viewBox="0 0 560 90" class="g"><rect class="bx" x="10" y="25" width="150" height="40" rx="4"/>${tx(85,50,a)}<line class="ln" x1="160" y1="45" x2="230" y2="45"/><path class="bx" d="M230 45L280 15L330 45L280 75Z"/>${tx(280,49,r)}<line class="ln" x1="330" y1="45" x2="400" y2="45"/><rect class="bx" x="400" y="25" width="150" height="40" rx="4"/>${tx(475,50,b)}${tx(185,38,ca,"cd")}${tx(375,38,cb,"cd")}</svg>`}
+function TB(T,R,st,w,h){const m="m"+(++mid);let s=`<svg viewBox="0 0 ${w} ${h}" class="g"><defs><marker id="${m}" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="var(--ac)"/></marker></defs>`;
+T.forEach(t=>{if((t.s||0)>st)return;const cw=t.cw||90,cs=t.c.filter(c=>(c.s||0)<=st);t.W=cs.length*cw;t.H=26+Math.max((t.r||[]).length,1)*22;
+s+=`<rect class="bx" x="${t.x}" y="${t.y}" width="${t.W}" height="${t.H}" rx="5"/><text class="th" x="${t.x}" y="${t.y-7}">${t.n}</text><line class="ln" x1="${t.x}" x2="${t.x+t.W}" y1="${t.y+26}" y2="${t.y+26}"/>`;
+cs.forEach((c,i)=>s+=tx(t.x+i*cw+cw/2,t.y+17,c.t,(c.k=="fk"?"fk ":"")+((c.k=="pk"||(c.p!=null&&c.p<=st))?"pk":"")));
+(t.r||[]).forEach((r,j)=>r.forEach((v,i)=>s+=tx(t.x+i*cw+cw/2,t.y+26+j*22+16,v)));
+(t.g||[]).filter(g=>g[1]<=st).forEach((g,i)=>s+=`<text class="tg" x="${t.x}" y="${t.y+t.H+16+i*15}">${g[0]}</text>`)});
+const ry=(t,r)=>t.y+(r<0?13:37+r*22);
+R.forEach(a=>{const f=T[a.f],o=T[a.t];if((a.s||0)>st||(f.s||0)>st||(o.s||0)>st)return;const L=o.x<f.x,x1=L?f.x:f.x+f.W,x2=L?o.x+o.W:o.x,y1=ry(f,a.fr==null?-1:a.fr),y2=ry(o,a.tr==null?-1:a.tr),xm=(x1+x2)/2;s+=`<path class="ar" d="M${x1} ${y1}C${xm} ${y1} ${xm} ${y2} ${x2} ${y2}" marker-end="url(#${m})"/>`});
+return s.includes("class=\"bx\"")?s+"</svg>":""}
+
+/* ---------- Theorie-Grafiken ---------- */
+$("#g1").innerHTML=ER("Angestellter","1","leitet","N","Projekt");
+$("#g2").innerHTML=TB([{n:"abteilung",x:20,y:30,cw:100,c:[{t:"name",k:"pk"},{t:"standort"}],r:[["Einkauf","Hagen"],["Vertrieb","Soest"]]},{n:"angestellte",x:340,y:30,cw:100,c:[{t:"name",k:"pk"},{t:"abteilung",k:"fk"}],r:[["Anna","Einkauf"],["Bert","Einkauf"],["Cora","Vertrieb"]],g:[["abteilung NOT NULL (1 = muss)",0]]}],[{f:1,t:0,fr:0,tr:0},{f:1,t:0,fr:1,tr:0},{f:1,t:0,fr:2,tr:1}],9,560,150);
+$("#g3").innerHTML=TB([{n:"angestellte",x:10,y:30,cw:80,c:[{t:"name",k:"pk"},{t:"abteilung"}],r:[["Anna","Einkauf"],["Bert","Vertrieb"]]},{n:"projektmitarbeit",x:255,y:30,cw:90,c:[{t:"angestellter",k:"fk",p:0},{t:"projekt",k:"fk",p:0},{t:"stunden"}],r:[["Anna","Web",20],["Anna","App",5],["Bert","Web",12]]},{n:"projekte",x:620,y:30,cw:80,c:[{t:"titel",k:"pk"},{t:"budget"}],r:[["Web",5000],["App",8000]]}],[{f:1,t:0,fr:0,tr:0},{f:1,t:0,fr:1,tr:0},{f:1,t:0,fr:2,tr:1},{f:1,t:2,fr:0,tr:0},{f:1,t:2,fr:1,tr:1},{f:1,t:2,fr:2,tr:0}],9,800,150);
+$("#g4").innerHTML=`<svg viewBox="0 0 560 150" class="g">${["1NF|einfache Werte","2NF|volle Abhängigkeit vom Schlüssel","3NF|keine transitiven Abhängigkeiten","4NF|nichts Berechenbares"].map((x,i)=>{const[a,b]=x.split("|");return `<rect class="bx" x="${10+i*135}" y="${100-i*28}" width="125" height="${48+i*28}" rx="4"/>${tx(72+i*135,122-i*28,a,"cd")}<text x="${72+i*135}" y="${142-i*28}" text-anchor="middle" style="font-size:11px">${b.length>22?b.slice(0,b.lastIndexOf(" ",22)):b}</text>${b.length>22?`<text x="${72+i*135}" y="${154-i*28}" text-anchor="middle" style="font-size:11px">${b.slice(b.lastIndexOf(" ",22)+1)}</text>`:""}`}).join("")}</svg>`;
+
+/* ---------- SQL-Einführung ---------- */
+const ht=(h,r)=>"<table><tr>"+h.map(x=>"<th>"+x+"</th>").join("")+"</tr>"+r.map(a=>"<tr>"+a.map(x=>"<td>"+(x===null?"<i>NULL</i>":x)+"</td>").join("")+"</tr>").join("")+"</table>";
+const PH=["MatrikelNr","Studiengang","Studienfach","Studienort","Zensur","Versuch"],PR=[[1000,"BWL","Mathematik","Hagen","2.3",1],[1004,"Informatik","Statistik","Hagen","1.7",1],[1007,"BWL","Führung","Iserlohn","1.3",1],[1099,"Maschinenbau","Werkstoffe","Meschede","2.3",2],[1233,"Maschinenbau","Mathematik","Iserlohn","4.0",2],[1340,"BWL","Mathematik","Meschede","3.3",1]];
+const pc=(...i)=>[i.map(k=>PH[k]),PR.map(r=>i.map(k=>r[k]))];
+const AH=["Vorname","Nachname","Fuehrerscheinklasse"],KH=["KundenID","Name"],AUH=["AuftragsID","KundenID"];
+const TU=[
+["Was ist eine Tabelle?","Stell dir eine Excel-Tabelle vor. Eine <b>Datenbank</b> besteht aus mehreren solcher Tabellen. Jede <b>Spalte</b> (Attribut) beschreibt eine Eigenschaft, jede <b>Zeile</b> (Datensatz) ist ein Eintrag. <b>SQL</b> ist die Sprache, mit der du der Datenbank Fragen stellst. SQL-Befehle lesen sich fast wie englische Sätze und enden mit einem Semikolon. Wir üben an dieser Tabelle <code>pruefungen</code> (Prüfungsergebnisse von Studierenden):"+ht(PH,PR)+"<p>Eine Zensur ist besser, je <b>kleiner</b> sie ist (1,0 = sehr gut).</p>"],
+["Alles anzeigen: SELECT","<code>SELECT</code> heißt „zeige mir“. Der Stern <code>*</code> steht für „alle Spalten“. Hinter <code>FROM</code> steht der Name der Tabelle.","SELECT * FROM pruefungen;","SELECT = zeige · * = alle Spalten · FROM = aus · pruefungen = Tabelle",PH,PR],
+["Nur bestimmte Spalten","Statt <code>*</code> schreibst du die gewünschten Spalten, getrennt durch Kommas.","SELECT MatrikelNr, Zensur FROM pruefungen;","Zeige nur die Spalten MatrikelNr und Zensur",...pc(0,4)],
+["Zeilen filtern: WHERE","<code>WHERE</code> heißt „wo“: Es bleiben nur die Zeilen, die die Bedingung erfüllen. <b>Text steht in einfachen Anführungszeichen</b> ('Hagen'), Zahlen ohne. Vergleiche: <code>=</code> gleich, <code>&lt;&gt;</code> ungleich, <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code>.","SELECT * FROM pruefungen WHERE Studienort = 'Hagen';","Zeige alles, wo der Studienort Hagen ist",PH,PR.filter(r=>r[3]=="Hagen")],
+["Mit Zahlen vergleichen","Dasselbe mit einer Zahl: Wir suchen die guten Zensuren (kleiner als 2).","SELECT MatrikelNr, Zensur FROM pruefungen WHERE Zensur < 2;","Zeige MatrikelNr und Zensur, wo die Zensur kleiner als 2 ist",["MatrikelNr","Zensur"],[[1004,"1.7"],[1007,"1.3"]]],
+["Sortieren: ORDER BY","<code>ORDER BY</code> sortiert das Ergebnis, standardmäßig aufsteigend. Mit <code>DESC</code> am Ende sortierst du absteigend. Bei gleichen Werten ist die Reihenfolge beliebig.","SELECT MatrikelNr, Zensur FROM pruefungen ORDER BY Zensur;","Sortiere nach Zensur, beste zuerst",["MatrikelNr","Zensur"],[[1007,"1.3"],[1004,"1.7"],[1000,"2.3"],[1099,"2.3"],[1340,"3.3"],[1233,"4.0"]]],
+["Textsuche: LIKE","<code>LIKE</code> sucht nach Mustern. <code>%</code> steht für beliebig viele Zeichen (auch keins), <code>_</code> für genau ein Zeichen. <code>'M%'</code> = beginnt mit M, <code>'%e%'</code> = enthält ein e, <code>'_e%'</code> = zweiter Buchstabe ist ein e.","SELECT MatrikelNr, Studienfach FROM pruefungen WHERE Studienfach LIKE 'M%';","Zeige die Fächer, die mit M beginnen",["MatrikelNr","Studienfach"],[[1000,"Mathematik"],[1233,"Mathematik"],[1340,"Mathematik"]]],
+["Leere Felder: NULL","<b>NULL</b> bedeutet „unbekannt“ oder „nichts eingetragen“. Das ist <u>nicht</u> dasselbe wie 0 oder leerer Text. Darum funktioniert <code>= NULL</code> nicht, du musst <code>IS NULL</code> (oder <code>IS NOT NULL</code>) schreiben. Beispiel: Tabelle <code>angestellte</code>"+ht(AH,[["Anna","Meyer","B"],["Bert","Maier",null],["Cara","Lang","BE"]]),"SELECT Vorname, Nachname FROM angestellte WHERE Fuehrerscheinklasse IS NULL;","Zeige alle, bei denen die Führerscheinklasse unbekannt ist",["Vorname","Nachname"],[["Bert","Maier"]]],
+["Zählen und Rechnen: Aggregatfunktionen","Sie fassen viele Zeilen zu einem Wert zusammen: <code>COUNT</code> (Anzahl), <code>SUM</code> (Summe), <code>AVG</code> (Durchschnitt), <code>MIN</code> (kleinster), <code>MAX</code> (größter Wert).","SELECT COUNT(*), AVG(Zensur) FROM pruefungen;","Zähle die Zeilen und bilde den Durchschnitt der Zensuren",["COUNT(*)","AVG(Zensur)"],[[6,"2.48"]]],
+["Gruppieren: GROUP BY","Mit <code>GROUP BY</code> rechnest du nicht über die ganze Tabelle, sondern <b>je Gruppe</b>, hier je Studienort.","SELECT Studienort, AVG(Zensur) FROM pruefungen GROUP BY Studienort;","Bilde je Studienort den Durchschnitt der Zensuren",["Studienort","AVG(Zensur)"],[["Hagen","2.0"],["Iserlohn","2.65"],["Meschede","2.8"]]],
+["Gruppen filtern: HAVING","<code>WHERE</code> filtert einzelne Zeilen <u>vor</u> dem Gruppieren. <code>HAVING</code> filtert die Gruppen <u>nach</u> dem Gruppieren und darf Aggregatfunktionen nutzen.","SELECT Studienort, AVG(Zensur) FROM pruefungen GROUP BY Studienort HAVING AVG(Zensur) < 2.5;","Zeige nur die Orte, deren Durchschnitt besser als 2,5 ist",["Studienort","AVG(Zensur)"],[["Hagen","2.0"]]],
+["Tabellen verknüpfen: JOIN","Daten sind auf mehrere Tabellen verteilt. Der <b>Fremdschlüssel</b> <code>KundenID</code> in <code>auftraege</code> verweist auf <code>kunden</code>."+ht(KH,[[1,"Anna"],[2,"Otto"],[3,"Doro"]])+ht(AUH,[[10,1],[11,1],[12,3]])+"<code>ON</code> sagt, welche Spalten zusammenpassen. Ein <b>INNER JOIN</b> zeigt nur Kunden mit Auftrag. Ein <b>LEFT JOIN</b> zeigt alle Kunden der linken Tabelle, auch ohne Auftrag (dann steht NULL da).","SELECT kunden.Name, auftraege.AuftragsID FROM kunden LEFT JOIN auftraege ON kunden.KundenID = auftraege.KundenID;","Zeige alle Kunden und, falls vorhanden, ihre Aufträge",["Name","AuftragsID"],[["Anna",10],["Anna",11],["Otto",null],["Doro",12]]],
+["Tabellen anlegen und füllen","<code>CREATE TABLE</code> legt eine Tabelle an: Spaltenname, dann Datentyp. <code>int</code> = ganze Zahl, <code>varchar(50)</code> = Text bis 50 Zeichen, <code>decimal(2,1)</code> = Kommazahl (2 Stellen, 1 davon nach dem Komma, <b>mit Punkt</b> schreiben), <code>date</code> = Datum. <code>PRIMARY KEY</code> legt den Primärschlüssel fest. <code>INSERT INTO … VALUES</code> fügt eine Zeile ein.","CREATE TABLE kunden (\n  KundenID int,\n  Name varchar(50),\n  PRIMARY KEY(KundenID)\n);\nINSERT INTO kunden (KundenID, Name) VALUES (4, 'Eva');","Lege die Tabelle an und füge die Zeile (4, Eva) ein",KH,[[4,"Eva"]]]];
+function rt(){const c=$("#e .tu");c.innerHTML="";TU.forEach(([t,x,q,u,h,r],i)=>{const d=el("div","box","<h3>Schritt "+i+": "+t+"</h3><p>"+x+"</p>");if(q){const p=el("pre"),o=el("div","fb"),b=el("button","go","Ergebnis anzeigen");p.textContent=q;o.hidden=true;o.innerHTML="<p>Das Ergebnis"+(i<13?":":" (so sieht die Tabelle danach aus):")+"</p>"+ht(h,r);b.onclick=()=>{o.hidden=!o.hidden;b.textContent=o.hidden?"Ergebnis anzeigen":"Ergebnis verbergen"};d.append(p,el("p","","<b>Übersetzt:</b> "+u),b,o)}c.append(d)});
+c.append(el("div","box","<h3>Die häufigsten Anfängerfehler</h3><p>1. <code>= NULL</code> statt <code>IS NULL</code>.<br>2. Dezimalzahlen mit Komma statt Punkt (2.3, nicht 2,3).<br>3. Text ohne einfache Anführungszeichen.<br>4. Komma zwischen den Spalten vergessen, oder ein Komma zu viel vor FROM.<br>5. Aggregatfunktion in WHERE statt in HAVING.<br>6. Semikolon am Ende vergessen.</p><p>Jetzt bist du bereit für den Reiter „SQL-Praxis“.</p>"))}
+rb("e",rt,"Alles zudecken");rt();
+
+/* ---------- Moderiertes Üben ---------- */
+
+const S=[
+["Lege die Tabelle <code>pruefungen</code> an: matrikel_nr (int), studienfach (varchar(100)), zensur (decimal(2,1)).",[[/create\s+table\s+pruefungen/,"CREATE TABLE pruefungen"],[/matrikel_nr\s+int/,"matrikel_nr int"],[/studienfach\s+varchar\s*\(\s*100\s*\)/,"studienfach varchar(100)"],[/zensur\s+decimal\s*\(\s*2\s*,\s*1\s*\)/,"zensur decimal(2,1)"]],"CREATE TABLE pruefungen (\n  matrikel_nr int,\n  studienfach varchar(100),\n  zensur decimal(2,1)\n);"],
+["Füge in <code>pruefungen</code> Matrikelnummer 1000, Studienfach „Mathematik“ und Zensur 2,3 ein (Dezimalpunkt beachten).",[[/insert\s+into\s+pruefungen/,"INSERT INTO pruefungen"],[/values/,"VALUES"],[/\b1000\b/,"1000"],[/'mathematik'/,"'Mathematik'"],[/2\.3/,"2.3"]],"INSERT INTO pruefungen (matrikel_nr, studienfach, zensur)\nVALUES (1000, 'Mathematik', 2.3);"],
+["Zeige alle Datensätze der Tabelle <code>Pruefungen</code>, bei denen der Studienort Hagen ist.",[[/select\s+.+\s+from/,"SELECT … FROM"],[/from\s+pruefungen/,"FROM Pruefungen"],[/where\s+studienort\s*=\s*'hagen'/,"WHERE Studienort = 'Hagen'"]],"SELECT * FROM Pruefungen\nWHERE Studienort = 'Hagen';"],
+["Zeige alle Datensätze, deren Studienfach ein „e“ enthält.",[[/from\s+pruefungen/,"FROM Pruefungen"],[/where\s+studienfach\s+like/,"WHERE Studienfach LIKE"],[/'%e%'/,"'%e%'"]],"SELECT * FROM Pruefungen\nWHERE Studienfach LIKE '%e%';"],
+["Zeige alle Angestellten, die keinen Führerschein besitzen (Fuehrerscheinklasse ist unbekannt).",[[/from\s+angestellte/,"FROM Angestellte"],[/where\s+fuehrerscheinklasse\s+is\s+null/,"WHERE Fuehrerscheinklasse IS NULL (nicht = NULL)"]],"SELECT * FROM Angestellte\nWHERE Fuehrerscheinklasse IS NULL;"],
+["Zeige Vorname, Nachname und Führerscheinklasse der Angestellten, die Spalte soll „Führerschein“ heißen.",[[/select\s+vorname\s*,\s*nachname/,"SELECT Vorname, Nachname, …"],[/as\s+["'\[`]?f(ü|ue)hrerschein/,"AS Führerschein"],[/from\s+angestellte/,"FROM Angestellte"]],"SELECT Vorname, Nachname,\n  Fuehrerscheinklasse AS Führerschein\nFROM Angestellte;"],
+["Zeige alle Angestellten, die zwischen dem 01.01.1990 und dem 01.01.2000 geboren sind.",[[/from\s+angestellte/,"FROM Angestellte"],[/where\s+geburtsdatum\s+between/,"WHERE Geburtsdatum BETWEEN"],[/between\s+.*1990.*\s+and\s+.*2000/,"BETWEEN '1990-01-01' AND '2000-01-01'"]],"SELECT * FROM Angestellte\nWHERE Geburtsdatum BETWEEN '1990-01-01' AND '2000-01-01';"],
+["Zeige alle Studierenden (MatrikelNr), die eine Prüfung geschrieben haben, ohne doppelte Datensätze.",[[/select\s+distinct/,"SELECT DISTINCT"],[/matrikelnr/,"MatrikelNr"],[/from\s+pruefungen/,"FROM Pruefungen"]],"SELECT DISTINCT MatrikelNr\nFROM Pruefungen;"],
+["Wie ist die Durchschnittszensur an den einzelnen Studienorten?",[[/select\s+studienort/,"SELECT Studienort, …"],[/avg\s*\(\s*zensur\s*\)/,"AVG(Zensur)"],[/from\s+pruefungen/,"FROM Pruefungen"],[/group\s+by\s+studienort/,"GROUP BY Studienort"]],"SELECT Studienort, AVG(Zensur)\nFROM Pruefungen\nGROUP BY Studienort;"],
+["Welche Studierenden haben eine bessere Durchschnittszensur als 2,5? (Bessere Zensur = kleinerer Wert)",[[/select\s+matrikelnr/,"SELECT MatrikelNr, …"],[/group\s+by\s+matrikelnr/,"GROUP BY MatrikelNr"],[/having\s+avg\s*\(\s*zensur\s*\)\s*<\s*2[.,]5/,"HAVING AVG(Zensur) < 2.5"]],"SELECT MatrikelNr, AVG(Zensur)\nFROM Pruefungen\nGROUP BY MatrikelNr\nHAVING AVG(Zensur) < 2.5;"],
+["Zeige mit einem verschachtelten SELECT die Studienfächer und Zensur der Prüfungen mit der besten Zensur aller Prüfungen.",[[/select\s+studienfach/,"SELECT Studienfach, …"],[/where\s+zensur\s*=\s*\(\s*select/,"WHERE Zensur = (SELECT …)"],[/min\s*\(\s*zensur\s*\)/,"MIN(Zensur)"]],"SELECT Studienfach, Zensur\nFROM Pruefungen\nWHERE Zensur = (SELECT MIN(Zensur) FROM Pruefungen);"],
+["Zeige alle Mitarbeiter und, sofern vorhanden, die Anzahl ihrer bearbeiteten Aufträge (auch 0). Tabellen: <code>Mitarbeiter(MitarbeiterID)</code>, <code>Auftrag(AuftragsID, MitarbeiterID)</code>.",[[/from\s+mitarbeiter/,"FROM Mitarbeiter"],[/left\s+join\s+auftrag/,"LEFT JOIN Auftrag"],[/on\s+\w+\.mitarbeiterid\s*=\s*\w+\.mitarbeiterid/,"ON Mitarbeiter.MitarbeiterID = Auftrag.MitarbeiterID"],[/count\s*\(/,"COUNT(…)"],[/group\s+by/,"GROUP BY …"]],"SELECT Mitarbeiter.MitarbeiterID,\n  COUNT(Auftrag.AuftragsID) AS AnzahlAuftraege\nFROM Mitarbeiter\nLEFT JOIN Auftrag\n  ON Mitarbeiter.MitarbeiterID = Auftrag.MitarbeiterID\nGROUP BY Mitarbeiter.MitarbeiterID;"]];
+const S0=[
+["Zeige alle Datensätze (alle Spalten) der Tabelle <code>Pruefungen</code>.",[[/select\s+\*/,"SELECT *"],[/from\s+pruefungen/,"FROM Pruefungen"]],"SELECT * FROM Pruefungen;"],
+["Zeige nur die Spalte MatrikelNr aller Prüfungen.",[[/select\s+matrikelnr/,"SELECT MatrikelNr"],[/from\s+pruefungen/,"FROM Pruefungen"]],"SELECT MatrikelNr FROM Pruefungen;"],
+["Zeige alle Datensätze, aufsteigend nach MatrikelNr und absteigend nach Versuch sortiert.",[[/from\s+pruefungen/,"FROM Pruefungen"],[/order\s+by\s+matrikelnr(\s+asc)?\s*,\s*versuch\s+desc/,"ORDER BY MatrikelNr, Versuch DESC"]],"SELECT * FROM Pruefungen\nORDER BY MatrikelNr ASC, Versuch DESC;"],
+["Zeige alle Datensätze, bei denen der Studienort nicht Iserlohn ist.",[[/from\s+pruefungen/,"FROM Pruefungen"],[/where\s+studienort\s*(<>|!=)\s*'iserlohn'/,"WHERE Studienort <> 'Iserlohn'"]],"SELECT * FROM Pruefungen\nWHERE Studienort <> 'Iserlohn';"],
+["Zeige alle Datensätze, die mindestens im zweiten Versuch sind.",[[/from\s+pruefungen/,"FROM Pruefungen"],[/where\s+versuch\s*>=\s*2/,"WHERE Versuch >= 2"]],"SELECT * FROM Pruefungen\nWHERE Versuch >= 2;"],
+["Zeige alle Datensätze, deren Studiengang mit einem „i“ beginnt.",[[/from\s+pruefungen/,"FROM Pruefungen"],[/where\s+studiengang\s+like\s+'i%'/,"WHERE Studiengang LIKE 'i%'"]],"SELECT * FROM Pruefungen\nWHERE Studiengang LIKE 'i%';"],
+["Zeige alle Datensätze, deren MatrikelNr an der zweiten Stelle die Ziffer 2 enthält.",[[/from\s+pruefungen/,"FROM Pruefungen"],[/where\s+matrikelnr\s+like\s+'_2%'/,"WHERE MatrikelNr LIKE '_2%'"]],"SELECT * FROM Pruefungen\nWHERE MatrikelNr LIKE '_2%';"],
+["Zeige alle Studierenden mit der Zensur 1,3, 2,3 oder 3,3 – mit <code>IN</code>.",[[/from\s+pruefungen/,"FROM Pruefungen"],[/where\s+zensur\s+in\s*\(/,"WHERE Zensur IN ( … )"],[/1\.3/,"1.3"],[/2\.3/,"2.3"],[/3\.3/,"3.3"]],"SELECT MatrikelNr, Zensur FROM Pruefungen\nWHERE Zensur IN (1.3, 2.3, 3.3);"],
+["Wie viele Datensätze hat die Tabelle <code>Pruefungen</code>?",[[/select\s+count\s*\(\s*\*?\s*\w*\s*\)/,"SELECT COUNT(*)"],[/from\s+pruefungen/,"FROM Pruefungen"]],"SELECT COUNT(*) FROM Pruefungen;"],
+["Was ist die beste und die schlechteste Zensur aller Prüfungen?",[[/min\s*\(\s*zensur\s*\)/,"MIN(Zensur)"],[/max\s*\(\s*zensur\s*\)/,"MAX(Zensur)"],[/from\s+pruefungen/,"FROM Pruefungen"]],"SELECT MIN(Zensur), MAX(Zensur)\nFROM Pruefungen;"]];
+const S2=[
+["Zeige Vorname, Nachname und Wohnort aller Schüler und Lehrer aus Hagen, Iserlohn oder Dortmund (Tabellen <code>Schueler</code> und <code>Lehrer</code>) mit <code>UNION</code>.",[[/from\s+schueler/,"FROM Schueler"],[/from\s+lehrer/,"FROM Lehrer"],[/union/,"UNION"],[/'hagen'/,"'Hagen'"],[/'iserlohn'/,"'Iserlohn'"],[/'dortmund'/,"'Dortmund'"]],"SELECT Vorname, Nachname, Wohnort FROM Schueler\nWHERE Wohnort IN ('Hagen','Iserlohn','Dortmund')\nUNION\nSELECT Vorname, Nachname, Wohnort FROM Lehrer\nWHERE Wohnort IN ('Hagen','Iserlohn','Dortmund');"],
+["Welche Produkte benötigen das Material „Salpeter“? Tabellen: <code>Produkt(ProduktID, ProduktBezeichnung)</code>, <code>ProduktMaterial(ProduktID, MaterialID)</code>, <code>Material(MaterialID, MaterialBezeichnung)</code>.",[[/from\s+produkt\b/,"FROM Produkt"],[/join\s+produktmaterial/,"JOIN ProduktMaterial"],[/join\s+material\b/,"JOIN Material"],[/on\s+.+=.+on\s+.+=/,"zwei ON-Bedingungen"],[/'salpeter'/,"WHERE … = 'Salpeter'"]],"SELECT Produkt.ProduktBezeichnung, Material.MaterialBezeichnung\nFROM Produkt\nINNER JOIN ProduktMaterial\n  ON Produkt.ProduktID = ProduktMaterial.ProduktID\nINNER JOIN Material\n  ON ProduktMaterial.MaterialID = Material.MaterialID\nWHERE Material.MaterialBezeichnung = 'Salpeter';"],
+["Lege <code>kunden(name)</code> mit Primärschlüssel und <code>auftraege(datum date, kunde varchar(50), volumen decimal(10,2))</code> mit Fremdschlüssel <code>kunde</code> auf <code>kunden(name)</code> an.",[[/create\s+table\s+kunden/,"CREATE TABLE kunden"],[/primary\s+key/,"PRIMARY KEY"],[/create\s+table\s+auftraege/,"CREATE TABLE auftraege"],[/foreign\s+key\s*\(\s*kunde\s*\)\s*references\s+kunden\s*\(\s*name\s*\)/,"FOREIGN KEY(kunde) REFERENCES kunden(name)"]],"CREATE TABLE kunden (\n  name varchar(50),\n  PRIMARY KEY(name)\n);\nCREATE TABLE auftraege (\n  datum date,\n  kunde varchar(50),\n  volumen decimal(10,2),\n  FOREIGN KEY(kunde) REFERENCES kunden(name)\n);"],
+["Zeige das Angebot mit dem höchsten Preis (Tabelle <code>AngebotsProdukte(AngebotsID, Preis)</code>) mit einem verschachtelten SELECT.",[[/select\s+angebotsid/,"SELECT AngebotsID"],[/from\s+angebotsprodukte/,"FROM AngebotsProdukte"],[/where\s+preis\s*=\s*\(\s*select\s+max\s*\(\s*preis\s*\)/,"WHERE Preis = (SELECT MAX(Preis) …)"]],"SELECT AngebotsID FROM AngebotsProdukte\nWHERE Preis = (SELECT MAX(Preis) FROM AngebotsProdukte);"],
+["Wie viele Aufträge vor dem 01.01.2023 haben die Kunden, die vor diesem Datum mindestens 2 Aufträge vergeben haben? (Tabelle <code>Auftraege(KundenID, Auftragsdatum)</code>)",[[/select\s+kundenid/,"SELECT KundenID, …"],[/count\s*\(/,"COUNT(…)"],[/where\s+auftragsdatum\s*<\s*'/,"WHERE Auftragsdatum < '2023-01-01'"],[/group\s+by\s+kundenid/,"GROUP BY KundenID"],[/having\s+count\s*\(.*\)\s*>=\s*2/,"HAVING COUNT(…) >= 2"]],"SELECT KundenID, COUNT(*) AS AnzahlAuftraege\nFROM Auftraege\nWHERE Auftragsdatum < '2023-01-01'\nGROUP BY KundenID\nHAVING COUNT(*) >= 2;"]];
+mk("s",[...S.slice(0,2),...S0,...S.slice(2),...S2],1);
+const N=[
+["Was besagt das CAP-Theorem und welche drei Eigenschaften betrifft es?",[[/konsisten/,"Konsistenz"],[/verfügbar/,"Verfügbarkeit"],[/partition|ausfall/,"Partitionstoleranz"],[/zwei|2 von 3|nur 2/,"nur zwei der drei gleichzeitig"]],"In einem verteilten Datenbanksystem können nur zwei der drei Eigenschaften Konsistenz (C), Verfügbarkeit (A) und Partitionstoleranz (P) gleichzeitig erfüllt sein: C–A, C–P oder A–P."],
+["Ordne die Systeme Cassandra und MongoDB im CAP-Dreieck ein und beschreibe, was der Typ jeweils bedeutet.",[[/cassandra/,"Cassandra"],[/a.{0,2}p\b|verfügbar/,"A–P (verfügbar, ausfallsicher)"],[/mongodb/,"MongoDB"],[/c.{0,2}p\b|konsisten/,"C–P (konsistent, ausfallsicher)"]],"Cassandra ist A–P: immer verfügbar, auch bei Verbindungsstörungen, aber ohne Garantie ständiger Konsistenz. MongoDB ist C–P: Daten konsistent, betroffene Knoten werden bei Störungen vom Netz genommen (Abb. 14.6)."],
+["Erkläre den Unterschied zwischen ACID und BASE.",[[/acid/,"ACID"],[/base/,"BASE"],[/atomic|atomar|integrity|durab/,"atomicity, consistency, integrity, durability"],[/eventually|soft state|basically available|schwäch/,"eventually consistent / soft state / basically available"]],"ACID (atomicity, consistency, integrity, durability) ist das strikte Konsistenzmodell relationaler Datenbanken. Verteilte NoSQL-Datenbanken nutzen meist das schwächere BASE (basically available, soft state, eventually consistent)."],
+["Wie speichert eine dokumentbasierte Datenbank ihre Daten? Nenne Formate und Beispielsysteme.",[[/dokument/,"Dokumente"],[/json|bson|xml/,"JSON / BSON / XML"],[/mongodb|couchdb/,"MongoDB oder CouchDB"],[/schema|dynamisch|semistrukt/,"dynamisch strukturiert / schemafrei"]],"Die Daten liegen in Dokumenten aus dynamisch strukturierten Werten, meist als JSON oder BSON, auch XML. Bekannte Vertreter: CouchDB und MongoDB."],
+["Beschreibe die Arbeitsweise von MapReduce.",[[/map/,"Map"],[/reduce/,"Reduce"],[/schlüssel|key/,"Schlüssel-Wert-Paare"],[/google/,"von Google entwickelt"],[/worker|cluster|verteilt|master/,"Worker / Cluster / verteilte Daten"]],"MapReduce (Google, 2004) verarbeitet verteilte Daten in zwei Phasen: Map-Worker erzeugen aus (key, value) Zwischenergebnisse als Schlüssel-Wert-Paare, Reduce-Worker gruppieren sie nach Schlüssel und aggregieren sie. Der Master steuert die Worker."],
+["Welches Problem klassischer Hashverfahren löst konsistentes Hashing in verteilten Systemen?",[[/hash/,"Hashfunktion / Hashwert"],[/server|knoten|speicherort|slot/,"Server / Speicherorte"],[/anzahl|ändert|dynamisch|ausfall|hinzu/,"Anzahl der Speicherorte ändert sich"],[/ersetz|neu|zuordnung|umverteil|nicht.*alle/,"keine komplette Neuzuordnung nötig"]],"Beim klassischen Hashen erzwingt jede Änderung der Anzahl der Speicherorte (Ausfall, neue Knoten) eine neue Hashfunktion. Konsistentes Hashing (Dynamo-Modell) verteilt die Datenreferenzen so, dass Server dynamisch hinzukommen oder ausfallen können."]];
+const N2=[
+["Erkläre den Unterschied zwischen vertikaler und horizontaler Skalierung.",[[/vertikal/,"vertikal"],[/horizontal/,"horizontal"],[/speicher|rechenleistung|aufrüst|scale-up/,"Rechner aufrüsten (scale-up)"],[/zusätzlich|mehrere rechner|verteilt|scale-out|cloud/,"zusätzliche Rechner (scale-out)"]],"Vertikal (scale-up): Speicher oder Rechenleistung eines Systems erhöhen. Horizontal (scale-out): zusätzliche Rechner, so dass ein verteiltes Datenbanksystem entsteht (z. B. Cloud)."],
+["Nenne die vier Typen von NoSQL-Datenbanken.",[[/spalten/,"spaltenorientiert"],[/dokument/,"dokumentbasiert"],[/key|schlüssel-wert|schlüssel/,"Key-Value / Schlüssel-Wert"],[/graph/,"Graphdatenbank"]],"Spaltenorientierte Datenbanken, dokumentbasierte Datenbanken, Schlüssel-Wert-Speicher (Key-Value Stores) und Graphdatenbanken."],
+["Was ist ein Key-Value Store und wo liegt die Grenze gegenüber dokumentbasierten Datenbanken?",[[/assoziativ|array|map/,"assoziatives Array"],[/schlüssel|key/,"Schlüssel"],[/nicht|keine|nur/,"Suche nur über den Schlüssel, nicht über Inhalte"],[/redis|riak|memcache/,"Beispiel: Redis, Riak"]],"Key-Value Stores sind im Wesentlichen assoziative Arrays. Anders als bei dokumentbasierten Datenbanken kann man Daten nicht über den Schlüssel hinaus durchsuchen. Beispiele: Riak, Redis, MemCacheDB."],
+["Wofür eignen sich Graphdatenbanken? Nenne Anwendungsfälle und ein Beispielsystem.",[[/knoten/,"Knoten"],[/beziehung|kanten/,"Beziehungen / Kanten"],[/sozial|straße|strasse|netzwerk|fahrplan/,"soziale Netzwerke, Straßennetze, Fahrpläne"],[/neo4j|flockdb|pregel/,"Neo4j, FlockDB oder Pregel"]],"Sie speichern effizient Knoten und deren Beziehungen, etwa für soziale Netzwerke, Straßennetze oder Busfahrpläne. Bekannte Systeme: Neo4j, FlockDB (Twitter), Pregel (Google)."],
+["Warum eignen sich relationale Datenbanken schlecht für eine horizontale Skalierung?",[[/konsisten/,"Konsistenz"],[/parallel|gleichzeitig|mehrere nutzer/,"parallele Zugriffe"],[/transaktion|inkonsisten|kontostand/,"Transaktionen / Dateninkonsistenz"],[/verteilt|horizontal|knoten/,"verteilte Speicherung"]],"Die zentrale Rolle der Konsistenz bei parallelen Zugriffen: Ohne Abstimmung können gleichzeitige Transaktionen inkonsistente Daten erzeugen (Beispiel Kontostand). Zeilenorientierte Tabellenschemata sind zudem schlecht verteilbar."],
+["Was unterscheidet spaltenorientierte von zeilenorientierten Datenbanken? Wofür eignen sie sich?",[[/spaltenweise|nach.*spalten|spalten/,"Daten nach Spalten gespeichert"],[/analyse|aggregation|kompression/,"gut für Analyse, Aggregation, Kompression"],[/aufwendig|langsam|einfügen|joins/,"Einfügen/Suchen/Joins aufwendiger"],[/bigtable|hbase|cassandra|simpledb|hana/,"BigTable, HBase, Cassandra …"]],"Die Daten werden nach Spalten sortiert gespeichert (1, 2, 3, Peter, Paul, Mary, 42, 18, 36). Das ist effizient bei Analyse, Aggregation und Kompression; Einfügen, Suchen, Löschen und Joins sind aufwendiger. Beispiele: BigTable, HBase, Cassandra."]];
+mk("n",[...N,...N2],1);
+const CAPG=`<svg viewBox="0 0 560 230" class="g"><path class="bx" d="M280 24L60 200H500Z"/>${tx(280,16,"P  Partitionstoleranz")}${tx(60,220,"C  Konsistenz")}${tx(500,220,"A  Verfügbarkeit")}${tx(105,100,"C–P","cd")}${tx(105,117,"MongoDB, HBase, Redis")}${tx(455,100,"A–P","cd")}${tx(455,117,"Cassandra, CouchDB, DNS")}${tx(280,160,"C–A","cd")}${tx(280,178,"relationale DB (MySQL, Postgres)")}</svg>`;
+$("#capg").innerHTML=CAPG+'<p class="lead">CAP-Theorem: Es sind immer nur zwei der drei Eigenschaften gleichzeitig möglich (Skript, Abb. 14.6).</p>';
+
+/* ---------- 6 Moderiertes Üben ---------- */
+const W=[
+{n:"Angestellter ist in Projekt",t:"<b>Angestellter</b> (M) <i>ist in</i> <b>Projekt</b> (N). Ein Angestellter kann in mehreren Projekten sein, in einem Projekt arbeiten mehrere Angestellte.",s:[
+["Wie viele Tabellen brauchst du insgesamt?",["2","3","4"],1,"Zwei Grundtabellen (angestellte, projekte) plus eine Beziehungstabelle (Regel 8).","Mit Fremdschlüsseln allein kommst du bei M:N nicht weiter: Du bräuchtest unbegrenzt viele Fremdschlüssel."],
+["Wo stehen die Fremdschlüssel?",["Beide in angestellte","Beide in projekte","Beide in der Beziehungstabelle","Je einer in angestellte und projekte"],2,"Die Beziehungstabelle (z. B. projektmitarbeit) enthält die Primärschlüssel beider Grundtabellen als Fremdschlüssel: zwei 1-CM-Beziehungen.","Die Fremdschlüssel gehören in die „künstliche“ dritte Tabelle."],
+["Welchen Primärschlüssel erhält die Beziehungstabelle, wenn ein Paar höchstens eine Beziehung haben kann?",["Nur den Fremdschlüssel auf angestellte","Nur den Fremdschlüssel auf projekte","Beide Fremdschlüssel zusammen","Keinen"],2,"Beide Fremdschlüssel bilden den zusammengesetzten Primärschlüssel und sind damit nie NULL.","Ein einzelner Fremdschlüssel würde Duplikate verhindern, die gewünscht sind (mehrere Beziehungen je Angestelltem)."]]},
+{n:"Abteilung hat Angestellter",t:"<b>Abteilung</b> (1) <i>hat</i> <b>Angestellter</b> (N). Eine Abteilung kann mehrere Angestellte haben, jeder Angestellte muss zu einer Abteilung gehören.",s:[
+["Wie viele Tabellen brauchst du?",["1","2","3"],1,"Eine 1:N-Beziehung braucht keine Beziehungstabelle: abteilung und angestellte genügen.","Nur M:N braucht eine zusätzliche Beziehungstabelle."],
+["In welche Tabelle kommt der Fremdschlüssel?",["abteilung (1-Seite)","angestellte (N-Seite)","In beide"],1,"Regel 5: Der Fremdschlüssel steht auf der N-Seite; ein Angestellter hat maximal eine Abteilung, die 1-Seite bräuchte beliebig viele Fremdschlüssel.","Überlege, auf welcher Seite höchstens ein Fremdschlüssel nötig ist."],
+["Welche Eigenschaft hat der Fremdschlüssel?",["NULL erlaubt","NOT NULL","NOT NULL und UNIQUE"],1,"1-CM-Beziehung (Regel 7): Jeder Angestellte muss zu einer Abteilung gehören, also NOT NULL. UNIQUE wäre falsch, da eine Abteilung mehrere Angestellte hat.","„Muss“ bedeutet: Der Wert darf nicht fehlen."]]},
+{n:"Angestellter leitet Abteilung",t:"<b>Angestellter</b> (1) <i>leitet</i> <b>Abteilung</b> (1). Ein Angestellter leitet höchstens eine Abteilung, eine Abteilung muss genau einen Leiter haben.",s:[
+["In welche Tabelle kommt der Fremdschlüssel (leiter)?",["angestellte","abteilungen","In eine neue Beziehungstabelle"],1,"Jede Abteilung muss einen Leiter haben, also steht der Fremdschlüssel auf der Muss-Seite in abteilungen (Regel 10).","Eine Beziehungstabelle ist bei 1-C nicht nötig (nur bei C-C)."],
+["Welche Eigenschaften braucht der Fremdschlüssel?",["NULL erlaubt","Nur NOT NULL","NOT NULL und UNIQUE"],2,"NOT NULL, weil jede Abteilung einen Leiter hat, und UNIQUE, weil ein Angestellter höchstens eine Abteilung leitet.","Beide Seiten der Beziehung müssen durch Constraints abgesichert werden."]]}];
+const G=[
+{er:["Angestellter","M","ist in","N","Projekt"],T:[{n:"angestellte",x:10,y:34,s:1,cw:80,c:[{t:"name",k:"pk"},{t:"abteilung"}]},{n:"projektmitarbeit",x:260,y:34,s:1,cw:95,c:[{t:"stunden"},{t:"angestellter",k:"fk",s:2,p:3},{t:"projekt",k:"fk",s:2,p:3}]},{n:"projekte",x:620,y:34,s:1,cw:80,c:[{t:"titel",k:"pk"},{t:"budget"}]}],R:[{f:1,t:0,s:2},{f:1,t:2,s:2}]},
+{er:["Abteilung","1","hat","N","Angestellter"],T:[{n:"abteilung",x:20,y:34,s:1,cw:90,c:[{t:"name",k:"pk"},{t:"standort"}]},{n:"angestellte",x:330,y:34,s:1,cw:90,c:[{t:"name",k:"pk"},{t:"abteilung",k:"fk",s:2}],g:[["abteilung NOT NULL",3]]}],R:[{f:1,t:0,s:2}]},
+{er:["Angestellter","1","leitet","1","Abteilung"],T:[{n:"angestellte",x:20,y:34,cw:90,c:[{t:"name",k:"pk"},{t:"vorname"}]},{n:"abteilungen",x:330,y:34,cw:90,c:[{t:"name",k:"pk"},{t:"leiter",k:"fk",s:1}],g:[["leiter NOT NULL UNIQUE",2]]}],R:[{f:1,t:0,s:1}]}];
+G.forEach((g,i)=>Object.assign(W[i],g));
+let cur=0,stp=0;
+W.forEach((s,i)=>{const b=el("button","alt",(i+1)+". "+s.n);b.onclick=()=>go(i);$("#ws").append(b)});
+function say(t,w){const m=el("div","msg "+w,t);$("#wc").append(m);return m}
+function dg(){const w=W[cur];$("#wg").innerHTML=ER(...w.er)+TB(w.T,w.R,stp,800,130)}
+function go(i){cur=i;stp=0;$("#wc").innerHTML="";say("<b>Szenario:</b> "+W[i].t,"bot");dg();ask()}
+function ask(){const s=W[cur].s[stp];say("<b>Schritt "+(stp+1)+" von "+W[cur].s.length+":</b> "+s[0],"bot");const bx=el("div");s[1].forEach((t,j)=>{const b=el("button","opt",t);b.onclick=()=>{say(t,"me");if(j==s[2]){bx.remove();say("✔ "+s[3],"bot");stp++;dg();if(stp<W[cur].s.length)ask();else say("Szenario abgeschlossen. Die Grafik zeigt das fertige Ergebnis. Wähle oben ein weiteres Szenario oder starte neu.","bot")}else{b.disabled=true;say("✘ Nicht ganz. "+s[4],"bot")}};bx.append(b)});$("#wc").append(bx)}
+rb("w",()=>go(cur),"Szenario neu starten");
+$("#vr").onclick=()=>{$("#vs").value="";document.querySelectorAll(".card.open").forEach(x=>x.classList.remove("open"));rv()};
+go(0);
+show("home");
+</script>
+</body>
+</html>
